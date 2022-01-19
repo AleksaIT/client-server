@@ -25,6 +25,7 @@ void doprocessing(int sock)
         //DESIFROVANJE PORUKE OD KLIJENTA
         //printf("Enter key: ");
         //scanf("%d", &key);
+        
         for (i = 0; buffer[i] != '\0'; ++i)
         {
             ch = buffer[i];
