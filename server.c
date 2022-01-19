@@ -7,46 +7,66 @@
 #include <string.h>
 #include <unistd.h>
 
-	
-
 /*ovo je jezgro serverske funkcionalnosti-ova funkcija se poziva
 nakon uspostavljanja veze sa klijentom kako bi klijentu bilo
 omoguceno da komunicira sa serverom. */
-void doprocessing (int sock)
+void doprocessing(int sock)
 {
-    /*lokalne promenljive*/	
-    int n;
-    char buffer[256];
-    char sendBuf[256];
-    char tempstr[256];
+    /*lokalne promenljive*/
+    int n, i, key = 3, done = 0;
+    char buffer[256], sendBuf[256], tempstr[256], ch;
 
-    bzero(buffer,256);
-    int done = 0;
-	
+    bzero(buffer, 256);
 
     while (!done)
     {
-    	n = read(sock,buffer,255);
-	buffer[n] = 0;//terminiraj string primljen od strane klijenta
-	if (strcmp(buffer,"quit") == 0){
-		done = 1;			
-		printf("Client closed connection..\n");
+        n = read(sock, buffer, 255);
+        buffer[n] = 0; //terminiraj string primljen od strane klijenta
+        //DESIFROVANJE PORUKE OD KLIJENTA
+        //printf("Enter key: ");
+        //scanf("%d", &key);
+        for (i = 0; buffer[i] != '\0'; ++i)
+        {
+            ch = buffer[i];
+            if (ch >= 'a' && ch <= 'z')
+            {
+                ch = ch - key;
+                if (ch < 'a')
+                {
+                    ch = ch + 'z' - 'a' + 1;
+                }
+                buffer[i] = ch;
+            }
+            else if (ch >= 'A' && ch <= 'Z')
+            {
+                ch = ch - key;
+                if (ch < 'A')
+                {
+                    ch = ch + 'Z' - 'A' + 1;
+                }
+                buffer[i] = ch;
+            }
         }
-	else
-	{
-		printf("Received: %s\n",buffer);
-	}
 
+        if (strcmp(buffer, "ENDE") == 0)
+        {
+            done = 1;
+            printf("Client closed connection..\n");
+        }
+        else
+        {
+            printf("Received: %s\n", buffer);
+        }
     }
 }
 
 /* glavni program serverske aplikacije */
-int main( int argc, char *argv[] )
+int main(int argc, char *argv[])
 {
     int sockfd, newsockfd, portno, clilen;
     char buffer[256];
     struct sockaddr_in serv_addr, cli_addr;
-    int  n;
+    int n;
 
     /* najpre se poziva uvek socket() funkcija da se registruje socket:
 	AF_INET je neophodan kada se zahteva komunikacija bilo koja
@@ -64,7 +84,7 @@ int main( int argc, char *argv[] )
     }
 
     /* Inicijalizacija strukture socket-a */
-    bzero((char *) &serv_addr, sizeof(serv_addr));
+    bzero((char *)&serv_addr, sizeof(serv_addr));
     portno = 5001;
     serv_addr.sin_family = AF_INET; //mora biti AF_INET
     /* ip adresa host-a. INADDR_ANY vraca ip adresu masine na kojoj se startovao server */
@@ -72,30 +92,28 @@ int main( int argc, char *argv[] )
     /* broj porta-ne sme se staviti kao broj vec se mora konvertovati u
 	tzv. network byte order funkcijom htons*/
     serv_addr.sin_port = htons(portno);
- 
-
 
     /* Sada bind-ujemo adresu sa prethodno kreiranim socket-om */
-    if (bind(sockfd, (struct sockaddr *) &serv_addr,
-                          sizeof(serv_addr)) < 0)
+    if (bind(sockfd, (struct sockaddr *)&serv_addr,
+             sizeof(serv_addr)) < 0)
     {
-         perror("ERROR on binding");
-         exit(1);
+        perror("ERROR on binding");
+        exit(1);
     }
     printf("Server started.. waiting for clients ...\n");
 
     /* postavi prethodno kreirani socket kao pasivan socket
 	koji ce prihvatati zahteve za konekcijom od klijenata
 	koriscenjem accept funkcije */
-    listen(sockfd,5); //maksimalno 5 klijenata moze da koristi moje usluge
+    listen(sockfd, 5); //maksimalno 5 klijenata moze da koristi moje usluge
     clilen = sizeof(cli_addr);
-	
+
     while (1)
-    { 	
-	/*ovde ce cekati sve dok ne stigne zahtev za konekcijom od prvog klijenta*/
+    {
+        /*ovde ce cekati sve dok ne stigne zahtev za konekcijom od prvog klijenta*/
         newsockfd = accept(sockfd,
-                (struct sockaddr *) &cli_addr, &clilen);
-	printf("Client connected...\n");
+                           (struct sockaddr *)&cli_addr, &clilen);
+        printf("Client connected...\n");
         if (newsockfd < 0)
         {
             perror("ERROR on accept");
@@ -104,13 +122,13 @@ int main( int argc, char *argv[] )
 
         /* Kreiraj child proces sa ciljem da mozes istovremeno da
 	komuniciras sa vise klijenata */
-	int  pid = fork();
+        int pid = fork();
         if (pid < 0)
         {
             perror("ERROR on fork");
-	    exit(1);
+            exit(1);
         }
-        if (pid == 0)  
+        if (pid == 0)
         {
             /* child proces ima pid 0 te tako mozemo znati da li
 		se ovaj deo koda izvrsava u child ili parent procesu */
@@ -120,14 +138,11 @@ int main( int argc, char *argv[] )
         }
         else
         {
-		/*ovo je parent proces koji je samo zaduzen da
+            /*ovo je parent proces koji je samo zaduzen da
 		delegira poslove child procesima-stoga ne moras
 		da radis nista vec samo nastavi da osluskujes
-		nove klijente koji salju zahtev za konekcijom*/		
+		nove klijente koji salju zahtev za konekcijom*/
             close(newsockfd);
         }
     } /* end of while */
 }
-
-
-
