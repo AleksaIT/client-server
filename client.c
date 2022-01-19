@@ -76,6 +76,7 @@ int main(int argc, char *argv[])
         char ch;
         //printf("Kljuc za sifrovanje: ");
         //scanf("%d", &key);
+        
         for (i = 0; line[i] != '\0'; ++i)
         {
             ch = line[i];
