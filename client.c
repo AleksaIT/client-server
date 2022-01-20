@@ -74,8 +74,6 @@ int main(int argc, char *argv[])
         //SIFROVANJE PORUKE PRE SLANJA SERVERU
         int i, key = 3;
         char ch;
-        //printf("Kljuc za sifrovanje: ");
-        //scanf("%d", &key);
         
         for (i = 0; line[i] != '\0'; ++i)
         {
