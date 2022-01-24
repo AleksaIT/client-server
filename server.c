@@ -12,10 +12,26 @@ struct agent
     char alter[20];
     char ime[20];
     char lokacija[20];
-}agent;
+} agent;
 
 struct agent tabela[10];
 FILE *file;
+
+void nadji(char *buffer, int i)
+{
+    file = fopen("agents.txt", "r");
+    if (file == NULL)
+    {
+        fprintf(stderr, "\nNemoguc pristup podacima!\n");
+    }
+    else
+    {
+        if (strcmp(buffer, tabela[i].alter) == 0)
+        {
+            printf("Server -> Klijent: %s%s", tabela[i].ime, tabela[i].lokacija);
+        }
+    }
+}
 
 void doprocessing(int sock)
 {
@@ -52,46 +68,27 @@ void doprocessing(int sock)
             }
         }
 
-        if (strcmp(buffer, "NEEDINFO") == 0)
-        {
-            printf("Server -> Klijent: YOUCANGETINFO");
-            file = fopen("agents.txt", "r");
-            if (file == NULL)
-            {
-                fprintf(stderr, "\nNemoguc pristup podacima!\n");
-                done = 1;
-            }
-            else
-            {
-                for (int i = 0; i < 3; i++)
-                {
-                    if (strcmp(buffer, tabela[i].alter) == 0)
-                    {
-                        printf("Server -> Klijent: %s%s", tabela[i].ime, tabela[i].lokacija);
-                    }
-                    else {
-                        printf("Nema obavestajaca sa pod tim alter egom!");
-                        done = 1;
-                    }
-                }
-            }
-        }
-
         if (strcmp(buffer, "ENDE") == 0)
         {
             done = 1;
             printf("Server -> Klijent: ENDE\n");
         }
-        /*else if (strcmp(buffer, "NEEDINFO") == 0)
+        else 
+        if (strcmp(buffer, "NEEDINFO") == 0)
+    {
+        printf("Server -> Klijent: YOUCANGETINFO");
+        for (int i = 0; i < 3; i++)
         {
-            printf("YOUCANGETINFO");
-            //ubaciti cekanje na buffer koji poklapa ime alter ega
-        }*/
+            nadji(buffer, i);
+        }
+    }
         else
         {
             printf("Klijent -> Server: %s\n", buffer);
         }
     }
+
+    
 }
 /* glavni program serverske aplikacije */
 int main(int argc, char *argv[])
