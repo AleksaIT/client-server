@@ -7,13 +7,13 @@ struct MyStruct
     char lok[20];
 } MyStruct;
 
-struct MyStruct tabela[10];
+struct MyStruct tabela[5];
 
 void write_struct()
 {
     FILE *file;
     file = fopen("agents.txt", "w");
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 5; i++)
     {
         printf("Alter ego?:");
         scanf("%s", tabela[i].alter);
@@ -23,7 +23,6 @@ void write_struct()
         scanf("%s", tabela[i].lok);
         fwrite(&tabela[i], sizeof(MyStruct), 1, file);
     }
-    
     fclose(file);
 }
 

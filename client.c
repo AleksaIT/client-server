@@ -71,7 +71,6 @@ int main(int argc, char *argv[])
         }
         /* posalji poruku serveru */
 
-        //SIFROVANJE PORUKE PRE SLANJA SERVERU
         int i, key = 3;
         char ch;
         
