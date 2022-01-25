@@ -1,4 +1,3 @@
-
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
@@ -10,8 +9,6 @@
 #include <errno.h>
 #include <arpa/inet.h>
 
-/* definisanje globalnih promenljivih */
-
 int main(int argc, char *argv[])
 {
     int sockfd = 0;
@@ -20,14 +17,13 @@ int main(int argc, char *argv[])
     char *line = NULL;
     size_t len = 0;
     int nread;
-    /* klijentska aplikacija se poziva sa ./ime_aplikacija ip_adresa_servera */
+
     if (argc != 2)
     {
         printf("\n Usage: %s <ip of server> \n", argv[0]);
         return 1;
     }
 
-    /* kreiraj socket za komunikaciju sa serverom */
     if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         printf("\n Error : Could not create socket \n");
@@ -35,19 +31,15 @@ int main(int argc, char *argv[])
     }
     memset(&serv_addr, 0, sizeof(serv_addr));
 
-    /* kao i podatke neophodne za komunikaciju sa serverom */
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(5001);
 
-    /* inet_pton konvertuje ip adresu iz stringa u format
-	neophodan za serv_addr strukturu */
     if (inet_pton(AF_INET, argv[1], &serv_addr.sin_addr) <= 0)
     {
         printf("\n inet_pton error occured\n");
         return 1;
     }
 
-    /* povezi se sa serverom definisanim preko ip adrese i porta */
     if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
         printf("\n Error : Connect Failed \n");
@@ -56,12 +48,10 @@ int main(int argc, char *argv[])
 
     printf("Connected to server... Send message to server, or type 'quit' to exit\n");
 
-    /* udji u petlju u kojoj ces slati poruke server sve dok ne posaljes “ENDE” */
     done = 0;
     while (!done)
     {
         nread = getline(&line, &len, stdin);
-        //ignore '\n'
         nread--;
         line[nread] = '\0';
         if (strcmp(line, "ENDE") == 0)
@@ -69,7 +59,6 @@ int main(int argc, char *argv[])
             done = 1;
             printf("Closing connection with the server..\n");
         }
-        /* posalji poruku serveru */
 
         int i, key = 3;
         char ch;

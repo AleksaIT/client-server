@@ -33,12 +33,12 @@ void nadji(char *buffer, int i)
         }
     }
 }*/
+    char *agents[] = {"ALEKSAVELICKOVICIZRAEL", "TANASIJEIVKOVICNEMACKA", "DUSANPOPOVSRBIJA", "EDWARDSNOWDENAMERIKA", "GORANZIVALJEVICBRITANIJA"};
+    char *alter[] = {"SPEKTRA", "SHADOW", "JAMESBOND", "WORM", "BIAS"};
 
 int agent(int sock)
 {
     char buffer[256], ch;
-    char *agents[] = {"ALEKSAVELICKOVICIZRAEL", "TANASIJEIVKOVICNEMACKA", "DUSANPOPOVSRBIJA", "EDWARDSNOWDENAMERIKA", "GORANZIVALJEVICBRITANIJA"};
-    char *alter[] = {"SPEKTRA", "JANISJOPLIN", "JAMESBOND", "WORM", "BIAS"};
     int n, i, j, key = 3;
 
     bzero(buffer, 256);
