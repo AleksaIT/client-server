@@ -33,8 +33,8 @@ void nadji(char *buffer, int i)
         }
     }
 }*/
-    char *agents[] = {"ALEKSAVELICKOVICIZRAEL", "TANASIJEIVKOVICNEMACKA", "DUSANPOPOVSRBIJA", "EDWARDSNOWDENAMERIKA", "GORANZIVALJEVICBRITANIJA"};
-    char *alter[] = {"SPEKTRA", "SHADOW", "JAMESBOND", "WORM", "BIAS"};
+char *agents[] = {"ALEKSAVELICKOVICIZRAEL", "TANASIJEIVKOVICNEMACKA", "DUSANPOPOVSRBIJA", "EDWARDSNOWDENAMERIKA", "GORANZIVALJEVICBRITANIJA"};
+char *alter[] = {"SPEKTRA", "SHADOW", "JAMESBOND", "WORM", "BIAS"};
 
 int agent(int sock)
 {
@@ -79,7 +79,7 @@ int agent(int sock)
     }
     printf("Klijent -> Server: %s\n", buffer);
     printf("AlterEgo se ne poklapa, prekidam komunikaciju.\n");
-    return 5; //prekidaj program
+    return 5; // prekidaj program
 }
 
 void doprocessing(int sock)
@@ -117,19 +117,19 @@ void doprocessing(int sock)
 
         printf("Klijent -> Server: %s\n", buffer);
 
-        if (strcmp(buffer, "NEEDINFO") == 0)
-        {
-            printf("Server -> Klijent: YOUCANGETINFO\n");
-            m = agent(sock);
-            if (m == 5) //gasi
-            {
-                done = 1;
-            }
-        }
-        else if (strcmp(buffer, "ENDE") == 0)
+        if (strcmp(buffer, "ENDE") == 0)
         {
             done = 1;
             printf("Server -> Klijent: ENDE\n");
+        }
+        else if (strcmp(buffer, "NEEDINFO") == 0)
+        {
+            printf("Server -> Klijent: YOUCANGETINFO\n");
+            m = agent(sock);
+            if (m == 5) // gasi
+            {
+                done = 1;
+            }
         }
         else
         {
